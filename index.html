@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html><head><meta charset="utf-8"><title>Muffett Investments — Multi-Strategy Portfolio (Local Report)</title>
+<style>
+  body { font-family: -apple-system, Segoe UI, Helvetica, Arial, sans-serif; background:#F2EFE9; color:#262626; margin:0; padding:40px; }
+  .wrap { max-width: 1100px; margin: 0 auto; }
+  h1 { color:#1F2937; font-size:26px; margin-bottom:2px; }
+  .sub { color:#595959; font-size:13px; margin-bottom:28px; }
+  .cards { display:flex; gap:16px; flex-wrap:wrap; margin-bottom:32px; }
+  .card { background:white; border-radius:8px; padding:18px 22px; flex:1; min-width:160px; box-shadow:0 1px 3px rgba(0,0,0,0.08); }
+  .card .label { font-size:11px; text-transform:uppercase; letter-spacing:0.05em; color:#595959; margin-bottom:6px; }
+  .card .value { font-size:22px; font-weight:600; color:#1F2937; }
+  .card .sub-value { font-size:13px; margin-top:2px; }
+  h2 { color:#1F2937; font-size:16px; border-bottom:2px solid #8A6D3B; padding-bottom:6px; margin-top:36px; }
+  .bar-row { display:flex; align-items:center; gap:10px; margin:8px 0; font-size:13px; }
+  .bar-label { width:170px; color:#262626; }
+  .bar-track { flex:1; background:#e5e0d8; border-radius:4px; height:10px; overflow:hidden; }
+  .bar-fill { background:#8A6D3B; height:100%; }
+  .bar-pct { width:50px; text-align:right; color:#595959; }
+  table { width:100%; border-collapse:collapse; margin-top:10px; font-size:13px; background:white; }
+  th { background:#1F2937; color:white; text-align:left; padding:8px 10px; font-weight:600; font-size:11px; text-transform:uppercase; letter-spacing:0.03em; }
+  td { padding:8px 10px; border-bottom:1px solid #ececec; }
+  td.num { text-align:right; font-variant-numeric:tabular-nums; }
+  td.sym { font-weight:600; color:#1F2937; }
+  td.empty { text-align:center; color:#595959; padding:20px; }
+  tr:nth-child(even) { background:#F2EFE9; }
+  .footer { margin-top:36px; font-size:11px; color:#595959; }
+</style></head>
+<body><div class="wrap">
+  <h1>Multi-Strategy Portfolio</h1>
+  <div class="sub">IBKR Paper Trading &middot; Generated 2026-08-03 17:19 UTC &middot; Local report, not published</div>
+
+  <div class="cards">
+    <div class="card"><div class="label">Portfolio Value</div><div class="value">$1,002,470.64</div></div>
+    <div class="card"><div class="label">Total Return</div><div class="value" style="color:#1E7A34">+0.25%</div><div class="sub-value" style="color:#1E7A34">$2,470.64</div></div>
+    <div class="card"><div class="label">Cash Remaining</div><div class="value">$922,346.82</div><div class="sub-value">8.0% deployed</div></div>
+    <div class="card"><div class="label">Open Positions</div><div class="value">3</div><div class="sub-value">2 winners &middot; 1 losers</div></div>
+  </div>
+
+  <h2>Allocation by Sleeve</h2>
+  <div class="bar-row"><span class="bar-label">Equity</span><div class="bar-track"><div class="bar-fill" style="width:7.8%"></div></div><span class="bar-pct">7.8%</span></div><div class="bar-row"><span class="bar-label">Cash</span><div class="bar-track"><div class="bar-fill" style="width:92.0%;background:#595959"></div></div><span class="bar-pct">92.0%</span></div>
+
+  <h2>Allocation by Theme</h2>
+  <div class="bar-row"><span class="bar-label">Commodities</span><div class="bar-track"><div class="bar-fill" style="width:2.7%"></div></div><span class="bar-pct">2.7%</span></div><div class="bar-row"><span class="bar-label">Asia Middle Class</span><div class="bar-track"><div class="bar-fill" style="width:2.6%"></div></div><span class="bar-pct">2.6%</span></div><div class="bar-row"><span class="bar-label">Global Ageing</span><div class="bar-track"><div class="bar-fill" style="width:2.6%"></div></div><span class="bar-pct">2.6%</span></div>
+
+  <h2>Open Positions</h2>
+  <table>
+    <tr><th>Ticker</th><th>Sleeve</th><th>Theme</th><th>Shares</th><th>Avg Cost</th><th>Current</th><th>Cost Basis</th><th>Value</th><th>Gain/Loss $</th><th>Gain/Loss %</th><th>Weight</th></tr>
+    <tr><td class="sym">HBM</td><td>Equity</td><td>Commodities</td><td class="num">1,155</td><td class="num">23.20</td><td class="num">23.04</td><td class="num">$26,790.23</td><td class="num">$26,611.20</td><td class="num" style="color:#B3261E">-$179.03</td><td class="num" style="color:#B3261E">-0.67%</td><td class="num">2.7%</td></tr><tr><td class="sym">UBER</td><td>Equity</td><td>Asia Middle Class</td><td class="num">360</td><td class="num">71.25</td><td class="num">71.55</td><td class="num">$25,648.20</td><td class="num">$25,758.00</td><td class="num" style="color:#1E7A34">$109.80</td><td class="num" style="color:#1E7A34">+0.43%</td><td class="num">2.6%</td></tr><tr><td class="sym">BSX</td><td>Equity</td><td>Global Ageing</td><td class="num">530</td><td class="num">47.58</td><td class="num">48.31</td><td class="num">$25,214.75</td><td class="num">$25,604.30</td><td class="num" style="color:#1E7A34">$389.55</td><td class="num" style="color:#1E7A34">+1.54%</td><td class="num">2.6%</td></tr>
+  </table>
+
+  <h2>Recent Activity (submitted orders)</h2>
+  <table>
+    <tr><th>Time (UTC)</th><th>Ticker</th><th>Side</th><th>Qty</th><th>Entry</th><th>Stop</th><th>Risk $</th></tr>
+    <tr><td colspan="7" class="empty">No submitted trades logged yet.</td></tr>
+  </table>
+
+  <div class="footer">
+    Starting NAV: $1,000,000.00. This report reads live positions and prices directly from IBKR paper trading and cross-references config/symbol_map.yaml for sleeve/theme tags.
+    It is not connected to or published on muffettinvestments.com. Simulated trading only &mdash; not investment advice.
+  </div>
+</div></body></html>
