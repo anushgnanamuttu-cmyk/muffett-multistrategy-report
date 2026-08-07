@@ -1,58 +1,409 @@
 <!DOCTYPE html>
-<html><head><meta charset="utf-8"><title>Muffett Investments — Multi-Strategy Portfolio (Local Report)</title>
+<html lang="en"><head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Muffett Investments — Multi-Strategy Portfolio</title>
 <style>
-  body { font-family: -apple-system, Segoe UI, Helvetica, Arial, sans-serif; background:#F2EFE9; color:#262626; margin:0; padding:40px; }
-  .wrap { max-width: 1100px; margin: 0 auto; }
-  h1 { color:#1F2937; font-size:26px; margin-bottom:2px; }
-  .sub { color:#595959; font-size:13px; margin-bottom:28px; }
-  .cards { display:flex; gap:16px; flex-wrap:wrap; margin-bottom:32px; }
-  .card { background:white; border-radius:8px; padding:18px 22px; flex:1; min-width:160px; box-shadow:0 1px 3px rgba(0,0,0,0.08); }
-  .card .label { font-size:11px; text-transform:uppercase; letter-spacing:0.05em; color:#595959; margin-bottom:6px; }
-  .card .value { font-size:22px; font-weight:600; color:#1F2937; }
-  .card .sub-value { font-size:13px; margin-top:2px; }
-  h2 { color:#1F2937; font-size:16px; border-bottom:2px solid #8A6D3B; padding-bottom:6px; margin-top:36px; }
-  .bar-row { display:flex; align-items:center; gap:10px; margin:8px 0; font-size:13px; }
-  .bar-label { width:170px; color:#262626; }
-  .bar-track { flex:1; background:#e5e0d8; border-radius:4px; height:10px; overflow:hidden; }
-  .bar-fill { background:#8A6D3B; height:100%; }
-  .bar-pct { width:50px; text-align:right; color:#595959; }
-  table { width:100%; border-collapse:collapse; margin-top:10px; font-size:13px; background:white; }
-  th { background:#1F2937; color:white; text-align:left; padding:8px 10px; font-weight:600; font-size:11px; text-transform:uppercase; letter-spacing:0.03em; }
-  td { padding:8px 10px; border-bottom:1px solid #ececec; }
-  td.num { text-align:right; font-variant-numeric:tabular-nums; }
-  td.sym { font-weight:600; color:#1F2937; }
-  td.empty { text-align:center; color:#595959; padding:20px; }
-  tr:nth-child(even) { background:#F2EFE9; }
-  .footer { margin-top:36px; font-size:11px; color:#595959; }
-</style></head>
-<body><div class="wrap">
-  <h1>Multi-Strategy Portfolio</h1>
-  <div class="sub">IBKR Paper Trading &middot; Generated 2026-08-05 20:00 UTC &middot; Local report, not published</div>
+:root{
+  --bg:#0d1117;--card:#161b22;--card2:#1c2128;--border:#30363d;
+  --text:#e6edf3;--muted:#8b949e;--gold:#c9a84c;
+  --green:#22c55e;--red:#ef4444;--amber:#f59e0b;--blue:#60a5fa;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--text);font-family:'Segoe UI',system-ui,sans-serif;min-height:100vh}
 
-  <div class="cards">
-    <div class="card"><div class="label">Portfolio Value</div><div class="value">$1,005,615.40</div></div>
-    <div class="card"><div class="label">Total Return</div><div class="value" style="color:#1E7A34">+0.56%</div><div class="sub-value" style="color:#1E7A34">$5,615.40</div></div>
-    <div class="card"><div class="label">Cash Remaining</div><div class="value">$760,790.15</div><div class="sub-value">24.3% deployed</div></div>
-    <div class="card"><div class="label">Open Positions</div><div class="value">10</div><div class="sub-value">4 winners &middot; 6 losers</div></div>
+header{border-bottom:1px solid var(--border);padding:1rem 2rem;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:.75rem}
+.logo{font-size:1.15rem;font-weight:700;letter-spacing:.02em}
+.logo span{color:var(--gold)}
+.logo sub{font-size:.65rem;color:var(--muted);font-weight:400;display:block;letter-spacing:.04em;margin-top:2px}
+.demo-badge{display:inline-flex;align-items:center;gap:.4rem;background:rgba(201,168,76,.12);border:1px solid rgba(201,168,76,.35);border-radius:6px;padding:.35rem .75rem;font-size:.78rem;color:var(--gold);font-weight:600}
+.last-upd{font-size:.75rem;color:var(--muted)}
+
+main{max-width:1280px;margin:0 auto;padding:1.5rem}
+
+.summary-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:1rem;margin-bottom:1.5rem}
+.s-card{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:1rem 1.25rem}
+.s-card .sc-label{font-size:.72rem;text-transform:uppercase;letter-spacing:.07em;color:var(--muted);margin-bottom:.35rem}
+.s-card .sc-value{font-size:1.45rem;font-weight:700}
+.s-card .sc-sub{font-size:.75rem;color:var(--muted);margin-top:.25rem}
+.pos{color:var(--green)} .neg{color:var(--red)} .gold{color:var(--gold)} .blue{color:var(--blue)}
+
+.section{margin-bottom:1.5rem}
+.section-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:.75rem}
+.section-title{font-size:.85rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--gold)}
+.section-sub{font-size:.75rem;color:var(--muted)}
+
+/* Risk control panel */
+.risk-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:1rem}
+.rc-card{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:1rem 1.15rem}
+.rc-label{font-size:.72rem;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);margin-bottom:.4rem}
+.rc-value{font-size:1.1rem;font-weight:700;display:flex;align-items:center;gap:.5rem;flex-wrap:wrap}
+.rc-sub{font-size:.72rem;color:var(--muted);margin-top:.5rem;line-height:1.4}
+.rc-badge{font-size:.65rem;font-weight:700;padding:.15rem .5rem;border-radius:3px;letter-spacing:.02em}
+.rc-ok{background:rgba(34,197,94,.15);color:var(--green);border:1px solid rgba(34,197,94,.25)}
+.rc-warn{background:rgba(245,158,11,.12);color:var(--amber);border:1px solid rgba(245,158,11,.3)}
+.rc-halt{background:rgba(239,68,68,.15);color:var(--red);border:1px solid rgba(239,68,68,.3)}
+
+/* Allocation bar */
+.alloc-section{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:1.25rem}
+.alloc-bar{display:flex;border-radius:6px;overflow:hidden;height:20px;margin-bottom:.85rem}
+.alloc-segment{height:100%}
+.alloc-legend{display:flex;flex-wrap:wrap;gap:.6rem}
+.legend-item{display:flex;align-items:center;gap:.35rem;font-size:.75rem;color:var(--muted)}
+.legend-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0}
+
+/* Table */
+.tbl-wrap{background:var(--card);border:1px solid var(--border);border-radius:10px;overflow:hidden}
+table{width:100%;border-collapse:collapse;font-size:.85rem}
+th{padding:.65rem 1rem;text-align:left;color:var(--muted);font-weight:500;font-size:.75rem;text-transform:uppercase;letter-spacing:.04em;border-bottom:1px solid var(--border);white-space:nowrap}
+td{padding:.7rem 1rem;border-bottom:1px solid rgba(48,54,61,.4);vertical-align:middle}
+tr:last-child td{border-bottom:none}
+tr:hover td{background:rgba(255,255,255,.02)}
+td.num{text-align:right;font-variant-numeric:tabular-nums}
+.ticker-cell .t{font-weight:700;font-size:.92rem;display:flex;align-items:center;gap:.5rem}
+.sleeve-badge{font-size:.6rem;padding:.1rem .4rem;border-radius:3px;font-weight:700;letter-spacing:.02em}
+.sleeve-equity{background:rgba(201,168,76,.15);color:var(--gold)}
+.sleeve-index{background:rgba(96,165,250,.1);color:var(--blue)}
+.sleeve-fx{background:rgba(34,197,94,.12);color:var(--green)}
+
+.empty-state{padding:3rem 1rem;text-align:center;color:var(--muted)}
+.empty-state .e-icon{font-size:2rem;margin-bottom:.75rem}
+.empty-state .e-title{font-size:1rem;font-weight:600;color:var(--text);margin-bottom:.4rem}
+.empty-state .e-sub{font-size:.82rem;line-height:1.6}
+
+/* Trade log */
+.trade-row{display:flex;align-items:center;justify-content:space-between;padding:.7rem 1rem;border-bottom:1px solid rgba(48,54,61,.4);gap:1rem}
+.trade-row:last-child{border-bottom:none}
+.trade-left .tr-ticker{font-weight:700;font-size:.9rem}
+.trade-left .tr-detail{font-size:.73rem;color:var(--muted);margin-top:2px}
+.trade-right{text-align:right;flex-shrink:0}
+.trade-right .tr-type{font-size:.72rem;font-weight:700;padding:.15rem .5rem;border-radius:3px}
+.buy-badge{background:rgba(34,197,94,.15);color:var(--green)}
+.sell-badge{background:rgba(239,68,68,.15);color:var(--red)}
+
+.footer{margin-top:1.5rem;font-size:.72rem;color:var(--muted);line-height:1.6}
+
+@media(max-width:680px){
+  .summary-grid{grid-template-columns:1fr 1fr}
+  th,td{padding:.5rem .6rem;font-size:.78rem}
+}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">
+    Muffett <span>Investments</span>
+    <sub>MULTI-STRATEGY PORTFOLIO — IBKR PAPER TRADING</sub>
+  </div>
+  <div class="header-right">
+    <span class="demo-badge">$1,000,000 IBKR DEMO ACCOUNT</span>
+    <span class="last-upd">Generated 2026-08-07 15:05 UTC</span>
+  </div>
+</header>
+
+<main>
+
+  <div class="summary-grid">
+    <div class="s-card">
+      <div class="sc-label">Portfolio Value</div>
+      <div class="sc-value gold">$1,018,766.39</div>
+      <div class="sc-sub">Starting NAV $1,000,000.00</div>
+    </div>
+    <div class="s-card">
+      <div class="sc-label">Total Return</div>
+      <div class="sc-value pos">+1.88%</div>
+      <div class="sc-sub pos">$18,766.39</div>
+    </div>
+    <div class="s-card">
+      <div class="sc-label">Cash Remaining</div>
+      <div class="sc-value blue">$740,441.86</div>
+      <div class="sc-sub">27.3% deployed</div>
+    </div>
+    <div class="s-card">
+      <div class="sc-label">Open Positions</div>
+      <div class="sc-value gold">12</div>
+      <div class="sc-sub">8 winners &middot; 4 losers</div>
+    </div>
   </div>
 
-  <h2>Allocation by Sleeve</h2>
-  <div class="bar-row"><span class="bar-label">Equity</span><div class="bar-track"><div class="bar-fill" style="width:24.3%"></div></div><span class="bar-pct">24.3%</span></div><div class="bar-row"><span class="bar-label">Cash</span><div class="bar-track"><div class="bar-fill" style="width:75.7%;background:#595959"></div></div><span class="bar-pct">75.7%</span></div>
+  <div class="section">
+    <div class="section-header">
+      <div class="section-title">Risk Control Panel</div>
+      <div class="section-sub">Live status of every rule in config/risk_rules.yaml</div>
+    </div>
+    <div class="risk-grid">
+      <div class="rc-card"><div class="rc-label">Equity Position Cap</div><div class="rc-value">5% <span class="rc-badge rc-ok">largest held: 3.1%</span></div><div class="rc-sub">Per stock, of NAV — index/FX are not capped this way.</div></div><div class="rc-card"><div class="rc-label">Risk Per Trade Cap</div><div class="rc-value">0.5% <span class="rc-badge rc-ok">of NAV</span></div><div class="rc-sub">Hard cap on dollar risk-to-stop, every sleeve, every trade.</div></div><div class="rc-card"><div class="rc-label">Daily Loss Circuit Breaker</div><div class="rc-value">-3% <span class="rc-badge rc-ok">OK</span></div><div class="rc-sub">Blocks new index/FX orders for 24h if tripped. Equity exempt.</div></div><div class="rc-card"><div class="rc-label">Portfolio Drawdown Breaker</div><div class="rc-value">-15% <span class="rc-badge rc-ok">OK</span></div><div class="rc-sub">Peak-to-trough. Requires manual review to clear once tripped.</div></div><div class="rc-card"><div class="rc-label">Margin Utilization</div><div class="rc-value">13.2% <span class="rc-badge rc-ok">cap 50%</span></div><div class="rc-sub">$134,582.03 of $1,018,766.39 NAV committed to margin.</div></div>
+    </div>
+  </div>
 
-  <h2>Open Positions</h2>
-  <table>
-    <tr><th>Ticker</th><th>Sleeve</th><th>Shares</th><th>Avg Cost</th><th>Current</th><th>Cost Basis</th><th>Value</th><th>Gain/Loss $</th><th>Gain/Loss %</th><th>Weight</th></tr>
-    <tr><td class="sym">HBM</td><td>Equity</td><td class="num">1,155</td><td class="num">23.20</td><td class="num">25.92</td><td class="num">$26,790.23</td><td class="num">$29,937.60</td><td class="num" style="color:#1E7A34">$3,147.37</td><td class="num" style="color:#1E7A34">+11.75%</td><td class="num">3.0%</td></tr><tr><td class="sym">ARM</td><td>Equity</td><td class="num">100</td><td class="num">277.45</td><td class="num">276.00</td><td class="num">$27,745.00</td><td class="num">$27,600.00</td><td class="num" style="color:#B3261E">-$145.00</td><td class="num" style="color:#B3261E">-0.52%</td><td class="num">2.7%</td></tr><tr><td class="sym">AMAT</td><td>Equity</td><td class="num">50</td><td class="num">541.95</td><td class="num">540.01</td><td class="num">$27,097.50</td><td class="num">$27,000.50</td><td class="num" style="color:#B3261E">-$97.00</td><td class="num" style="color:#B3261E">-0.36%</td><td class="num">2.7%</td></tr><tr><td class="sym">NEM</td><td>Equity</td><td class="num">250</td><td class="num">97.86</td><td class="num">104.54</td><td class="num">$24,463.75</td><td class="num">$26,135.00</td><td class="num" style="color:#1E7A34">$1,671.25</td><td class="num" style="color:#1E7A34">+6.83%</td><td class="num">2.6%</td></tr><tr><td class="sym">GOOG</td><td>Equity</td><td class="num">70</td><td class="num">360.18</td><td class="num">360.44</td><td class="num">$25,212.90</td><td class="num">$25,230.80</td><td class="num" style="color:#1E7A34">$17.90</td><td class="num" style="color:#1E7A34">+0.07%</td><td class="num">2.5%</td></tr><tr><td class="sym">BSX</td><td>Equity</td><td class="num">530</td><td class="num">47.58</td><td class="num">47.44</td><td class="num">$25,214.75</td><td class="num">$25,143.20</td><td class="num" style="color:#B3261E">-$71.55</td><td class="num" style="color:#B3261E">-0.28%</td><td class="num">2.5%</td></tr><tr><td class="sym">UBER</td><td>Equity</td><td class="num">360</td><td class="num">71.25</td><td class="num">68.21</td><td class="num">$25,648.20</td><td class="num">$24,555.60</td><td class="num" style="color:#B3261E">-$1,092.60</td><td class="num" style="color:#B3261E">-4.26%</td><td class="num">2.4%</td></tr><tr><td class="sym">GILD</td><td>Equity</td><td class="num">180</td><td class="num">132.08</td><td class="num">131.88</td><td class="num">$23,773.60</td><td class="num">$23,738.92</td><td class="num" style="color:#B3261E">-$34.68</td><td class="num" style="color:#B3261E">-0.15%</td><td class="num">2.4%</td></tr><tr><td class="sym">QQQ</td><td>Equity</td><td class="num">30</td><td class="num">725.10</td><td class="num">719.74</td><td class="num">$21,753.10</td><td class="num">$21,592.20</td><td class="num" style="color:#B3261E">-$160.90</td><td class="num" style="color:#B3261E">-0.74%</td><td class="num">2.1%</td></tr><tr><td class="sym">ALNY</td><td>Equity</td><td class="num">60</td><td class="num">217.44</td><td class="num">227.22</td><td class="num">$13,046.20</td><td class="num">$13,633.20</td><td class="num" style="color:#1E7A34">$587.00</td><td class="num" style="color:#1E7A34">+4.50%</td><td class="num">1.4%</td></tr>
-  </table>
+  <div class="section">
+    <div class="section-header">
+      <div class="section-title">Allocation by Sleeve</div>
+      <div class="section-sub">Index/FX shown at notional exposure — can exceed 100% of NAV due to leverage; bar is scaled to fit, legend shows true %</div>
+    </div>
+    <div class="alloc-section">
+      <div class="alloc-bar"><div class="alloc-segment" style="width:53.8%;background:#60a5fa" title="Index: 116.6% of NAV"></div><div class="alloc-segment" style="width:12.6%;background:#c9a84c" title="Equity: 27.3% of NAV"></div><div class="alloc-segment" style="width:33.6%;background:#8b949e" title="Cash: 72.7% of NAV"></div></div>
+      <div class="alloc-legend"><div class="legend-item"><div class="legend-dot" style="background:#60a5fa"></div>Index 116.6%</div><div class="legend-item"><div class="legend-dot" style="background:#c9a84c"></div>Equity 27.3%</div><div class="legend-item"><div class="legend-dot" style="background:#8b949e"></div>Cash 72.7%</div></div>
+    </div>
+  </div>
 
-  <h2>Recent Activity (submitted orders)</h2>
-  <table>
-    <tr><th>Time (UTC)</th><th>Ticker</th><th>Side</th><th>Qty</th><th>Entry</th><th>Stop</th><th>Risk $</th></tr>
-    <tr><td>2026-08-05 19:56</td><td class="sym">GOOG</td><td>BUY</td><td class="num">70.0</td><td class="num">363.0</td><td class="num">330.0</td><td class="num">$2,310.00</td></tr><tr><td>2026-08-05 18:41</td><td class="sym">AMAT</td><td>BUY</td><td class="num">50.0</td><td class="num">540.6</td><td class="num">480.0</td><td class="num">$3,030.00</td></tr><tr><td>2026-08-05 18:37</td><td class="sym">ARM</td><td>BUY</td><td class="num">100.0</td><td class="num">277.15</td><td class="num">230.0</td><td class="num">$4,715.00</td></tr><tr><td>2026-08-05 12:20</td><td class="sym">USDJPY</td><td>SELL</td><td class="num">50000.0</td><td class="num">157.5</td><td class="num">157.85</td><td class="num">$111.11</td></tr><tr><td>2026-08-04 20:22</td><td class="sym">QQQ</td><td>BUY</td><td class="num">30.0</td><td class="num">722.2</td><td class="num">680.0</td><td class="num">$1,266.00</td></tr><tr><td>2026-08-04 18:59</td><td class="sym">GILD</td><td>BUY</td><td class="num">180.0</td><td class="num">132.52</td><td class="num">120.0</td><td class="num">$2,253.60</td></tr><tr><td>2026-08-04 15:33</td><td class="sym">USDJPY</td><td>SELL</td><td class="num">500000.0</td><td class="num">157.51</td><td class="num">157.85</td><td class="num">$1,079.30</td></tr><tr><td>2026-08-04 15:06</td><td class="sym">ALNY</td><td>BUY</td><td class="num">60.0</td><td class="num">218.26</td><td class="num">180.0</td><td class="num">$2,295.60</td></tr><tr><td>2026-08-04 14:10</td><td class="sym">NEM</td><td>BUY</td><td class="num">250.0</td><td class="num">97.94</td><td class="num">90.0</td><td class="num">$1,985.00</td></tr>
-  </table>
+  <div class="section">
+    <div class="section-header">
+      <div class="section-title">Open Positions</div>
+      <div class="section-sub">12 positions &middot; $740,441.86 cash remaining</div>
+    </div>
+    <div class="tbl-wrap"><table><thead><tr><th>Ticker</th><th>Qty</th><th>Avg Cost</th><th>Current</th><th>Cost Basis</th><th>Value</th><th>Gain/Loss $</th><th>Gain/Loss %</th><th>Weight</th></tr></thead><tbody><tr><td class="ticker-cell"><div class="t">NQ<span class="sleeve-badge sleeve-index">INDEX</span></div></td><td class="num">2</td><td class="num">$592,882.24</td><td class="num">$29,686.00</td><td class="num">$1,185,764.48</td><td class="num">$1,187,440.00</td><td class="num" style="color:#22c55e">$1,675.52</td><td class="num" style="color:#22c55e">+0.14%</td><td class="num">116.6%</td></tr><tr><td class="ticker-cell"><div class="t">HBM<span class="sleeve-badge sleeve-equity">EQUITY</span></div></td><td class="num">1,155</td><td class="num">$23.20</td><td class="num">$27.15</td><td class="num">$26,790.23</td><td class="num">$31,358.25</td><td class="num" style="color:#22c55e">$4,568.02</td><td class="num" style="color:#22c55e">+17.05%</td><td class="num">3.1%</td></tr><tr><td class="ticker-cell"><div class="t">NEM<span class="sleeve-badge sleeve-equity">EQUITY</span></div></td><td class="num">250</td><td class="num">$97.86</td><td class="num">$112.61</td><td class="num">$24,463.75</td><td class="num">$28,151.73</td><td class="num" style="color:#22c55e">$3,687.98</td><td class="num" style="color:#22c55e">+15.08%</td><td class="num">2.8%</td></tr><tr><td class="ticker-cell"><div class="t">ARM<span class="sleeve-badge sleeve-equity">EQUITY</span></div></td><td class="num">100</td><td class="num">$277.45</td><td class="num">$279.99</td><td class="num">$27,745.00</td><td class="num">$27,999.00</td><td class="num" style="color:#22c55e">$254.00</td><td class="num" style="color:#22c55e">+0.92%</td><td class="num">2.7%</td></tr><tr><td class="ticker-cell"><div class="t">UBER<span class="sleeve-badge sleeve-equity">EQUITY</span></div></td><td class="num">360</td><td class="num">$71.25</td><td class="num">$75.01</td><td class="num">$25,648.20</td><td class="num">$27,003.60</td><td class="num" style="color:#22c55e">$1,355.40</td><td class="num" style="color:#22c55e">+5.28%</td><td class="num">2.7%</td></tr><tr><td class="ticker-cell"><div class="t">NOW<span class="sleeve-badge sleeve-equity">EQUITY</span></div></td><td class="num">215</td><td class="num">$116.97</td><td class="num">$125.14</td><td class="num">$25,147.48</td><td class="num">$26,905.10</td><td class="num" style="color:#22c55e">$1,757.62</td><td class="num" style="color:#22c55e">+6.99%</td><td class="num">2.6%</td></tr><tr><td class="ticker-cell"><div class="t">AMAT<span class="sleeve-badge sleeve-equity">EQUITY</span></div></td><td class="num">50</td><td class="num">$541.95</td><td class="num">$535.93</td><td class="num">$27,097.50</td><td class="num">$26,796.50</td><td class="num" style="color:#ef4444">-$301.00</td><td class="num" style="color:#ef4444">-1.11%</td><td class="num">2.6%</td></tr><tr><td class="ticker-cell"><div class="t">BSX<span class="sleeve-badge sleeve-equity">EQUITY</span></div></td><td class="num">530</td><td class="num">$47.58</td><td class="num">$49.93</td><td class="num">$25,214.75</td><td class="num">$26,462.90</td><td class="num" style="color:#22c55e">$1,248.15</td><td class="num" style="color:#22c55e">+4.95%</td><td class="num">2.6%</td></tr><tr><td class="ticker-cell"><div class="t">GOOG<span class="sleeve-badge sleeve-equity">EQUITY</span></div></td><td class="num">70</td><td class="num">$360.18</td><td class="num">$353.30</td><td class="num">$25,212.90</td><td class="num">$24,731.00</td><td class="num" style="color:#ef4444">-$481.90</td><td class="num" style="color:#ef4444">-1.91%</td><td class="num">2.4%</td></tr><tr><td class="ticker-cell"><div class="t">GILD<span class="sleeve-badge sleeve-equity">EQUITY</span></div></td><td class="num">180</td><td class="num">$132.08</td><td class="num">$133.22</td><td class="num">$23,773.60</td><td class="num">$23,979.60</td><td class="num" style="color:#22c55e">$206.00</td><td class="num" style="color:#22c55e">+0.87%</td><td class="num">2.4%</td></tr><tr><td class="ticker-cell"><div class="t">QQQ<span class="sleeve-badge sleeve-equity">EQUITY</span></div></td><td class="num">30</td><td class="num">$725.10</td><td class="num">$720.12</td><td class="num">$21,753.10</td><td class="num">$21,603.60</td><td class="num" style="color:#ef4444">-$149.50</td><td class="num" style="color:#ef4444">-0.69%</td><td class="num">2.1%</td></tr><tr><td class="ticker-cell"><div class="t">ALNY<span class="sleeve-badge sleeve-equity">EQUITY</span></div></td><td class="num">60</td><td class="num">$217.44</td><td class="num">$215.39</td><td class="num">$13,046.20</td><td class="num">$12,923.40</td><td class="num" style="color:#ef4444">-$122.80</td><td class="num" style="color:#ef4444">-0.94%</td><td class="num">1.3%</td></tr></tbody></table></div>
+  </div>
+
+  <div class="section">
+    <div class="section-header">
+      <div class="section-title">Trade Log</div>
+      <div class="section-sub">Every submitted order, most recent first</div>
+    </div>
+    <div class="tbl-wrap">
+      <div class="trade-row">
+        <div class="trade-left">
+          <div class="tr-ticker">NQ — INDEX</div>
+          <div class="tr-detail">2026-08-07 14:08 UTC ·
+            1.0 units @ $29671.0
+             · stop $29610.0
+             · risk $61.00
+            </div>
+        </div>
+        <div class="trade-right">
+          <div class="tr-type buy-badge">BUY</div>
+        </div>
+      </div>
+      <div class="trade-row">
+        <div class="trade-left">
+          <div class="tr-ticker">NQ — INDEX</div>
+          <div class="tr-detail">2026-08-06 14:54 UTC ·
+            4.0 units @ $29617.0
+             · stop $29550.0
+             · risk $268.00
+            </div>
+        </div>
+        <div class="trade-right">
+          <div class="tr-type buy-badge">BUY</div>
+        </div>
+      </div>
+      <div class="trade-row">
+        <div class="trade-left">
+          <div class="tr-ticker">NQ — INDEX</div>
+          <div class="tr-detail">2026-08-06 13:39 UTC ·
+            4.0 units @ $29350.0
+             · stop $29300.0
+             · risk $200.00
+            </div>
+        </div>
+        <div class="trade-right">
+          <div class="tr-type buy-badge">BUY</div>
+        </div>
+      </div>
+      <div class="trade-row">
+        <div class="trade-left">
+          <div class="tr-ticker">NQ — INDEX</div>
+          <div class="tr-detail">2026-08-06 11:04 UTC ·
+            2.0 units @ $29480.0
+             · stop $29420.0
+             · risk $120.00
+            </div>
+        </div>
+        <div class="trade-right">
+          <div class="tr-type buy-badge">BUY</div>
+        </div>
+      </div>
+      <div class="trade-row">
+        <div class="trade-left">
+          <div class="tr-ticker">NQ — INDEX</div>
+          <div class="tr-detail">2026-08-06 10:55 UTC ·
+            2.0 units @ $29490.0
+             · stop $29440.0
+             · risk $100.00
+            </div>
+        </div>
+        <div class="trade-right">
+          <div class="tr-type buy-badge">BUY</div>
+        </div>
+      </div>
+      <div class="trade-row">
+        <div class="trade-left">
+          <div class="tr-ticker">NOW — EQUITY</div>
+          <div class="tr-detail">2026-08-05 20:00 UTC ·
+            215.0 units @ $117.4
+             · stop $100.0
+             · risk $3,741.00
+            </div>
+        </div>
+        <div class="trade-right">
+          <div class="tr-type buy-badge">BUY</div>
+        </div>
+      </div>
+      <div class="trade-row">
+        <div class="trade-left">
+          <div class="tr-ticker">GOOG — EQUITY</div>
+          <div class="tr-detail">2026-08-05 19:56 UTC ·
+            70.0 units @ $363.0
+             · stop $330.0
+             · risk $2,310.00
+            </div>
+        </div>
+        <div class="trade-right">
+          <div class="tr-type buy-badge">BUY</div>
+        </div>
+      </div>
+      <div class="trade-row">
+        <div class="trade-left">
+          <div class="tr-ticker">AMAT — EQUITY</div>
+          <div class="tr-detail">2026-08-05 18:41 UTC ·
+            50.0 units @ $540.6
+             · stop $480.0
+             · risk $3,030.00
+            </div>
+        </div>
+        <div class="trade-right">
+          <div class="tr-type buy-badge">BUY</div>
+        </div>
+      </div>
+      <div class="trade-row">
+        <div class="trade-left">
+          <div class="tr-ticker">ARM — EQUITY</div>
+          <div class="tr-detail">2026-08-05 18:37 UTC ·
+            100.0 units @ $277.15
+             · stop $230.0
+             · risk $4,715.00
+            </div>
+        </div>
+        <div class="trade-right">
+          <div class="tr-type buy-badge">BUY</div>
+        </div>
+      </div>
+      <div class="trade-row">
+        <div class="trade-left">
+          <div class="tr-ticker">USDJPY — FX</div>
+          <div class="tr-detail">2026-08-05 12:20 UTC ·
+            50000.0 units @ $157.5
+             · stop $157.85
+             · risk $111.11
+            </div>
+        </div>
+        <div class="trade-right">
+          <div class="tr-type sell-badge">SELL</div>
+        </div>
+      </div>
+      <div class="trade-row">
+        <div class="trade-left">
+          <div class="tr-ticker">QQQ — EQUITY</div>
+          <div class="tr-detail">2026-08-04 20:22 UTC ·
+            30.0 units @ $722.2
+             · stop $680.0
+             · risk $1,266.00
+            </div>
+        </div>
+        <div class="trade-right">
+          <div class="tr-type buy-badge">BUY</div>
+        </div>
+      </div>
+      <div class="trade-row">
+        <div class="trade-left">
+          <div class="tr-ticker">GILD — EQUITY</div>
+          <div class="tr-detail">2026-08-04 18:59 UTC ·
+            180.0 units @ $132.52
+             · stop $120.0
+             · risk $2,253.60
+            </div>
+        </div>
+        <div class="trade-right">
+          <div class="tr-type buy-badge">BUY</div>
+        </div>
+      </div>
+      <div class="trade-row">
+        <div class="trade-left">
+          <div class="tr-ticker">USDJPY — FX</div>
+          <div class="tr-detail">2026-08-04 15:33 UTC ·
+            500000.0 units @ $157.51
+             · stop $157.85
+             · risk $1,079.30
+            </div>
+        </div>
+        <div class="trade-right">
+          <div class="tr-type sell-badge">SELL</div>
+        </div>
+      </div>
+      <div class="trade-row">
+        <div class="trade-left">
+          <div class="tr-ticker">ALNY — EQUITY</div>
+          <div class="tr-detail">2026-08-04 15:06 UTC ·
+            60.0 units @ $218.26
+             · stop $180.0
+             · risk $2,295.60
+            </div>
+        </div>
+        <div class="trade-right">
+          <div class="tr-type buy-badge">BUY</div>
+        </div>
+      </div>
+      <div class="trade-row">
+        <div class="trade-left">
+          <div class="tr-ticker">NEM — EQUITY</div>
+          <div class="tr-detail">2026-08-04 14:10 UTC ·
+            250.0 units @ $97.94
+             · stop $90.0
+             · risk $1,985.00
+            </div>
+        </div>
+        <div class="trade-right">
+          <div class="tr-type buy-badge">BUY</div>
+        </div>
+      </div>
+      <div class="trade-row">
+        <div class="trade-left">
+          <div class="tr-ticker">BSX — EQUITY</div>
+          <div class="tr-detail">2026-08-03 15:10 UTC ·
+            530 units @ $47.58
+             · stop $40.0
+             · risk $4,017.40
+             · <em>backfilled</em></div>
+        </div>
+        <div class="trade-right">
+          <div class="tr-type buy-badge">BUY</div>
+        </div>
+      </div>
+      <div class="trade-row">
+        <div class="trade-left">
+          <div class="tr-ticker">UBER — EQUITY</div>
+          <div class="tr-detail">2026-08-03 14:50 UTC ·
+            360 units @ $71.25
+             · stop $64.0
+             · risk $2,610.00
+             · <em>backfilled</em></div>
+        </div>
+        <div class="trade-right">
+          <div class="tr-type buy-badge">BUY</div>
+        </div>
+      </div>
+      <div class="trade-row">
+        <div class="trade-left">
+          <div class="tr-ticker">HBM — EQUITY</div>
+          <div class="tr-detail">2026-08-03 14:35 UTC ·
+            1155 units @ $23.2
+             · stop $19.0
+             · risk $4,851.00
+             · <em>backfilled</em></div>
+        </div>
+        <div class="trade-right">
+          <div class="tr-type buy-badge">BUY</div>
+        </div>
+      </div></div>
+  </div>
 
   <div class="footer">
-    Starting NAV: $1,000,000.00. This report reads live positions and prices directly from IBKR paper trading and cross-references config/symbol_map.yaml for sleeve tags.
-    It is not connected to or published on muffettinvestments.com. Simulated trading only &mdash; not investment advice.
+    IBKR is the source of truth for this report — positions, prices, and NAV are pulled live from the paper account
+    on every generation, not from local logs. Sleeve tags cross-reference config/symbol_map.yaml (unmapped stocks
+    default to equity). This is a simulated $1,000,000 IBKR paper trading account &mdash; not a live brokerage
+    account, and nothing here is investment advice.
   </div>
-</div></body></html>
+
+</main>
+</body></html>
